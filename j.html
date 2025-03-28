@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>张真源 - 镜花水月</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .album-container {
+            text-align: center;
+        }
+
+        .album-cover {
+            width: 300px;
+            height: 300px;
+            background-image: url("i.jpg");
+            background-size: cover;
+            border-radius: 50%;
+            margin: 20px auto;
+            animation: spin 10s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .lyrics {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .lyrics p {
+            margin: 5px 0;
+            transition: transform 0.3s ease;
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        .controls button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="album-container">
+        <h1>张真源 - 镜花水月</h1>
+        <div class="album-cover"></div>
+        <audio id="audio">
+            <source src="path/to/your/music.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <div class="lyrics" id="lyrics">
+            <p>夜里洒下一场雨 淋得落花满地</p>
+            <p>抬头时北风渐起 卷走零落残影</p>
+            <p>可你的花语 是短暂地治愈</p>
+            <p>花瓣的残余 在朦胧中沉溺</p>
+           
+        </div>
+        <div class="controls">
+            <button id="play-pause">播放</button>
+        </div>
+    </div>
+    <script>
+        const audio = document.getElementById('audio');
+        const playPauseButton = document.getElementById('play-pause');
+        const lyrics = document.getElementById('lyrics');
+        const lyricLines = lyrics.getElementsByTagName('p');
+        let isPlaying = false;
+
+        playPauseButton.addEventListener('click', () => {
+            if (isPlaying) {
+                audio.pause();
+                playPauseButton.textContent = '播放';
+            } else {
+                audio.play();
+                playPauseButton.textContent = '暂停';
+            }
+            isPlaying = !isPlaying;
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            const currentTime = audio.currentTime;
+            // 这里需要根据实际歌词时间戳来调整滚动逻辑
+            // 示例：每5秒滚动一行歌词
+            const lineIndex = Math.floor(currentTime / 5);
+            if (lineIndex < lyricLines.length) {
+                const offset = lineIndex * lyricLines[0].offsetHeight;
+                lyrics.style.transform = `translateY(-${offset}px)`;
+            }
+        });
+    </script>
+</body>
+
+</html>    

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据可视化展示</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                        dark: '#1F2937',
+                        light: '#F3F4F6'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .shadow-card {
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+            .transition-custom {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-light to-gray-100 min-h-screen font-inter text-dark">
+    <div class="container mx-auto px-4 py-12 max-w-5xl">
+        <header class="text-center mb-12">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent mb-4">数据可视化展示</h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">探索社交媒体内容分析的关键指标，直观了解用户互动情况</p>
+        </header>
+
+        <main>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <button id="btn-comments" class="option-btn bg-white rounded-xl shadow-card p-6 flex flex-col items-center justify-center border-2 border-transparent hover:border-primary transition-custom group">
+                    <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-custom">
+                        <i class="fa fa-comments text-2xl text-primary"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold mb-2">评论量前三</h2>
+                    <p class="text-center text-gray-600">查看最受讨论的内容</p>
+                </button>
+
+                <button id="btn-likes" class="option-btn bg-white rounded-xl shadow-card p-6 flex flex-col items-center justify-center border-2 border-transparent hover:border-secondary transition-custom group">
+                    <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4 group-hover:bg-green-200 transition-custom">
+                        <i class="fa fa-thumbs-up text-2xl text-secondary"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold mb-2">点赞量前三</h2>
+                    <p class="text-center text-gray-600">查看最受欢迎的内容</p>
+                </button>
+
+                <button id="btn-wordcloud" class="option-btn bg-white rounded-xl shadow-card p-6 flex flex-col items-center justify-center border-2 border-transparent hover:border-accent transition-custom group">
+                    <div class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-custom">
+                        <i class="fa fa-cloud text-2xl text-accent"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold mb-2">词云图</h2>
+                    <p class="text-center text-gray-600">查看热门关键词分布</p>
+                </button>
+            </div>
+
+            <div id="image-container" class="bg-white rounded-2xl shadow-xl p-6 md:p-10 min-h-[400px] flex items-center justify-center relative overflow-hidden">
+                <div id="placeholder" class="text-center">
+                    <i class="fa fa-picture-o text-5xl text-gray-300 mb-4"></i>
+                    <p class="text-xl text-gray-400">请选择上方选项查看相应图片</p>
+                </div>
+                <img id="display-image" src="" alt="" class="max-w-full max-h-[600px] object-contain opacity-0 transition-opacity duration-500">
+                <div id="loading-indicator" class="absolute inset-0 flex items-center justify-center bg-white/80 opacity-0 pointer-events-none transition-opacity duration-300">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                </div>
+            </div>
+
+            <div class="mt-12 bg-white rounded-xl shadow-card p-6">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fa fa-info-circle text-primary mr-2"></i> 关于数据可视化
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-4 rounded-lg bg-blue-50">
+                        <h4 class="font-medium text-primary mb-2">评论量分析</h4>
+                        <p class="text-gray-600 text-sm">评论量前三图表展示了最受用户讨论的内容，反映了用户参与度和话题热度。</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-green-50">
+                        <h4 class="font-medium text-secondary mb-2">点赞量分析</h4>
+                        <p class="text-gray-600 text-sm">点赞量前三图表展示了最受欢迎的内容，体现了内容的质量和受众喜爱程度。</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-purple-50">
+                        <h4 class="font-medium text-accent mb-2">词云分析</h4>
+                        <p class="text-gray-600 text-sm">词云图展示了文本中出现频率较高的关键词，可以帮助快速把握内容主题和用户关注点。</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-16 text-center text-gray-500 text-sm">
+            <p>© 2025 数据可视化项目 | 使用 HTML, Tailwind CSS 和 JavaScript 构建</p>
+        </footer>
+    </div>
+
+    <script>
+        // 图片映射
+        const imageMap = {
+            'btn-comments': 'top3_comments.png',
+            'btn-likes': 'top3_likes.png',
+            'btn-wordcloud': 'wordcloud.png'
+        };
+
+        // 图片描述映射
+        const imageDescriptions = {
+            'btn-comments': '评论量前三的内容图表',
+            'btn-likes': '点赞量前三的内容图表',
+            'btn-wordcloud': '热门关键词词云图'
+        };
+
+        // 获取元素
+        const optionButtons = document.querySelectorAll('.option-btn');
+        const displayImage = document.getElementById('display-image');
+        const placeholder = document.getElementById('placeholder');
+        const loadingIndicator = document.getElementById('loading-indicator');
+
+        // 为每个按钮添加点击事件
+        optionButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // 移除所有按钮的活动状态
+                optionButtons.forEach(btn => {
+                    btn.classList.remove('border-primary', 'border-secondary', 'border-accent');
+                    btn.classList.add('border-transparent');
+                });
+
+                // 添加当前按钮的活动状态
+                if (this.id === 'btn-comments') {
+                    this.classList.remove('border-transparent');
+                    this.classList.add('border-primary');
+                } else if (this.id === 'btn-likes') {
+                    this.classList.remove('border-transparent');
+                    this.classList.add('border-secondary');
+                } else {
+                    this.classList.remove('border-transparent');
+                    this.classList.add('border-accent');
+                }
+
+                // 获取图片信息
+                const imageId = this.id;
+                const imageUrl = imageMap[imageId];
+                const imageAlt = imageDescriptions[imageId];
+
+                // 显示加载状态
+                placeholder.style.display = 'none';
+                displayImage.style.opacity = '0';
+                loadingIndicator.style.opacity = '1';
+                loadingIndicator.style.pointerEvents = 'auto';
+
+                // 模拟加载延迟
+                setTimeout(() => {
+                    // 设置图片源和描述
+                    displayImage.src = imageUrl;
+                    displayImage.alt = imageAlt;
+                    
+                    // 图片加载完成后显示
+                    displayImage.onload = function() {
+                        loadingIndicator.style.opacity = '0';
+                        loadingIndicator.style.pointerEvents = 'none';
+                        displayImage.style.opacity = '1';
+                    };
+                    
+                    // 图片加载失败时的处理
+                    displayImage.onerror = function() {
+                        loadingIndicator.style.opacity = '0';
+                        loadingIndicator.style.pointerEvents = 'none';
+                        placeholder.style.display = 'block';
+                        placeholder.innerHTML = `
+                            <i class="fa fa-exclamation-triangle text-5xl text-red-400 mb-4"></i>
+                            <p class="text-xl text-red-500">图片加载失败</p>
+                            <p class="text-gray-500">请确保 ${imageUrl} 文件存在</p>
+                        `;
+                    };
+                }, 600);
+            });
+        });
+    </script>
+</body>
+</html>
+    

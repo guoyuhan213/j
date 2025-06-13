@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>杭州湘湖逍遥庄园酒店</title>
+  <style>
+    /* 基础样式 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    }
+    
+    body {
+      background-color: #f8f5f0;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    /* 页面容器 */
+    .page-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    /* 单个页面样式 */
+    .page {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.5s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .page.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    /* 背景图片样式 */
+    .page-header {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2rem 1.5rem;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .page-header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.5));
+    }
+    
+    .page-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      z-index: 1;
+    }
+    
+    .page-subtitle {
+      font-size: 1rem;
+      z-index: 1;
+    }
+    
+    /* 内容区样式 */
+    .page-content {
+      flex: 1;
+      background-color: white;
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+    
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e0c9a4;
+    }
+    
+    .section-content {
+      margin-bottom: 1.5rem;
+    }
+    
+    .section-content p {
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+    
+    .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+    
+    .gallery-item {
+      overflow: hidden;
+      border-radius: 8px;
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: auto;
+      transition: transform 0.3s ease;
+    }
+    
+    .gallery-item img:hover {
+      transform: scale(1.05);
+    }
+    
+    /* 导航栏样式 */
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: white;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-around;
+      padding: 0.8rem 0;
+      z-index: 100;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #666;
+      text-decoration: none;
+      font-size: 0.75rem;
+    }
+    
+    .nav-item.active {
+      color: #e0c9a4;
+    }
+    
+    .nav-item i {
+      margin-bottom: 0.3rem;
+      font-size: 1.2rem;
+    }
+    
+    /* 按钮样式 */
+    .btn {
+      display: inline-block;
+      background-color: #e0c9a4;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: 500;
+      margin-top: 1rem;
+      text-align: center;
+      transition: background-color 0.3s ease;
+    }
+    
+    .btn:hover {
+      background-color: #d1b68f;
+    }
+    
+    /* 房型卡片样式 */
+    .room-card {
+      background-color: #f9f7f4;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    
+    .room-image {
+      width: 100%;
+      height: 150px;
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .room-content {
+      padding: 1rem;
+    }
+    
+    .room-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .room-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 0.8rem;
+    }
+    
+    .room-price {
+      font-weight: 600;
+      color: #e0c9a4;
+    }
+    
+    /* 餐饮板块样式 */
+    .restaurant-card {
+      display: flex;
+      margin-bottom: 1.5rem;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    
+    .restaurant-image {
+      width: 40%;
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .restaurant-content {
+      width: 60%;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .restaurant-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .restaurant-desc {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 0.8rem;
+    }
+    
+    /* 响应式调整 */
+    @media (min-width: 768px) {
+      .page-title {
+        font-size: 2.5rem;
+      }
+      
+      .page-subtitle {
+        font-size: 1.2rem;
+      }
+      
+      .section-title {
+        font-size: 1.8rem;
+      }
+      
+      .room-card {
+        flex-direction: row;
+      }
+      
+      .room-image {
+        width: 40%;
+        height: auto;
+      }
+      
+      .room-content {
+        width: 60%;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- 页面容器 -->
+  <div class="page-container">
+    <!-- 首页 -->
+    <div id="home" class="page active">
+      <div class="page-header" style="background-image: url('https://picsum.photos/id/1036/1200/800');">
+        <h1 class="page-title">杭州湘湖逍遥庄园酒店</h1>
+        <p class="page-subtitle">隐于山水间的诗意栖居</p>
+      </div>
+      <div class="page-content">
+        <h2 class="section-title">庄园简介</h2>
+        <div class="section-content">
+          <p>杭州湘湖逍遥庄园酒店坐落于风景秀丽的湘湖之畔，占地面积百余亩，是集住宿、餐饮、会议、休闲于一体的高端度假酒店。庄园融合江南园林美学与现代设计理念，亭台楼阁、小桥流水与湖光山色相映成趣，营造出“虽由人作，宛自天开”的诗意栖居地。</p>
+          <p>酒店距离杭州市中心仅30分钟车程，毗邻湘湖国家旅游度假区，周边拥有跨湖桥遗址、杭州极地海洋公园等景点，是商务出行、家庭度假、情侣出游的理想之选。</p>
+        </div>
+        
+        <h2 class="section-title">庄园特色</h2>
+        <div class="section-content">
+          <div class="image-gallery">
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1043/600/400" alt="庄园全景">
+            </div>
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1067/600/400" alt="园林景观">
+            </div>
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1048/600/400" alt="湖景客房">
+            </div>
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1080/600/400" alt="餐饮美食">
+            </div>
+          </div>
+          <a href="#" class="btn" id="explore-more">探索更多</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 酒店简介页 -->
+    <div id="about" class="page">
+      <div class="page-header" style="background-image: url('https://picsum.photos/id/1039/1200/800');">
+        <h1 class="page-title">关于逍遥庄园</h1>
+        <p class="page-subtitle">历史与现代的完美融合</p>
+      </div>
+      <div class="page-content">
+        <h2 class="section-title">庄园历史</h2>
+        <div class="section-content">
+          <p>杭州湘湖逍遥庄园酒店的前身是始建于民国时期的“湘湖别业”，曾是文人雅士隐居创作之地。2018年，经过精心修缮与扩建，庄园以“逍遥”为名重新亮相，既保留了传统建筑的精髓，又融入了现代奢华的旅居体验。</p>
+          <p>庄园内保留了多栋历史建筑，如“听雨楼”“揽月阁”等，每一栋建筑都承载着独特的故事，漫步其间，仿佛穿越时空，感受百年历史的沉淀。</p>
+        </div>
+        
+        <h2 class="section-title">设计理念</h2>
+        <div class="section-content">
+          <p>庄园的设计以“山水为墨，建筑为笔”，由国际知名设计团队操刀，将江南园林的“借景”“对景”等造园手法与现代酒店功能完美结合。园内曲径通幽，移步换景，每一扇窗都是一幅天然的山水画卷。</p>
+          <p>客房设计注重私密性与舒适性，大量使用原木、丝绸等天然材质，搭配现代智能设备，让宾客在感受传统文化的同时，享受便捷的现代生活。</p>
+        </div>
+        
+        <h2 class="section-title">荣誉与认证</h2>
+        <div class="section-content">
+          <ul>
+            <li>• 2023年获评“中国最佳度假酒店”</li>
+            <li>• 2022年入选“全球奢华精品酒店（SLH）”</li>
+            <li>• 2021年获得“绿色旅游饭店”白金级认证</li>
+            <li>• 2020年被评为“杭州十大网红打卡酒店”</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 设施服务页 -->
+    <div id="facilities" class="page">
+      <div class="page-header" style="background-image: url('https://picsum.photos/id/1060/1200/800');">
+        <h1 class="page-title">设施与服务</h1>
+        <p class="page-subtitle">全方位满足您的旅居需求</p>
+      </div>
+      <div class="page-content">
+        <h2 class="section-title">休闲设施</h2>
+        <div class="section-content">
+          <div class="image-gallery">
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1058/600/400" alt="恒温泳池">
+            </div>
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1071/600/400" alt="SPA中心">
+            </div>
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1069/600/400" alt="健身房">
+            </div>
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1076/600/400" alt="儿童乐园">
+            </div>
+          </div>
+          <p>庄园拥有室内恒温泳池、室外景观泳池、水疗中心、健身中心、儿童乐园等完善的休闲设施。水疗中心提供源自中医养生理念的特色护理项目，让您在湖光山色中放松身心；儿童乐园配备专业看护人员，是家庭度假的贴心之选。</p>
+        </div>
+        
+        <h2 class="section-title">会议与活动</h2>
+        <div class="section-content">
+          <p>庄园拥有多个不同规模的会议室和宴会厅，最大的“湘湖厅”可容纳300人，配备先进的视听设备和高速网络，是举办商务会议、婚礼庆典、产品发布会的理想场所。专业的宴会团队将为您提供从策划到执行的一站式服务。</p>
+          <p>此外，庄园还提供户外草坪婚礼、湖畔鸡尾酒会等特色活动场地，让您的活动在山水之间留下难忘回忆。</p>
+        </div>
+        
+        <h2 class="section-title">贴心服务</h2>
+        <div class="section-content">
+          <ul>
+            <li>• 24小时客房服务</li>
+            <li>• 免费接送服务（指定区域）</li>
+            <li>• 管家式服务（套房专享）</li>
+            <li>• 洗衣熨烫服务</li>
+            <li>• 旅游咨询与票务服务</li>
+            <li>• 宠物友好服务（部分房型）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 客房介绍页 -->
+    <div id="rooms" class="page">
+      <div class="page-header" style="background-image: url('https://picsum.photos/id/1048/1200/800');">
+        <h1 class="page-title">特色客房</h1>
+        <p class="page-subtitle">每一间都是独特的居住体验</p>
+      </div>
+      <div class="page-content">
+        <h2 class="section-title">湖景客房</h2>
+        <div class="room-card">
+          <div class="room-image" style="background-image: url('https://picsum.photos/id/1048/600/400');"></div>
+          <div class="room-content">
+            <h3 class="room-title">豪华湖景大床房</h3>
+            <div class="room-info">
+              <span>面积: 50㎡</span>
+              <span class="room-price">¥1,688起/晚</span>
+            </div>
+            <p>房间直面湘湖美景，超大落地窗将湖光山色引入室内，配备独立阳台、舒适 king size 床、智能卫浴系统，让您在自然怀抱中享受奢华睡眠。</p>
+          </div>
+        </div>
+        
+        <div class="room-card">
+          <div class="room-image" style="background-image: url('https://picsum.photos/id/1059/600/400');"></div>
+          <div class="room-content">
+            <h3 class="room-title">行政湖景双床房</h3>
+            <div class="room-info">
+              <span>面积: 55㎡</span>
+              <span class="room-price">¥1,988起/晚</span>
+            </div>
+            <p>位于高楼层，拥有更佳的湖景视野，配备行政酒廊使用权、专属管家服务，适合商务出行或追求高品质体验的宾客。</p>
+          </div>
+        </div>
+        
+        <h2 class="section-title">庭院别墅</h2>
+        <div class="room-card">
+          <div class="room-image" style="background-image: url('https://picsum.photos/id/1071/600/400');"></div>
+          <div class="room-content">
+            <h3 class="room-title">园林庭院别墅</h3>
+            <div class="room-info">
+              <span>面积: 120㎡</span>
+              <span class="room-price">¥3,688起/晚</span>
+            </div>
+            <p>独门独院的私密别墅，拥有专属庭院和温泉泡池，室内采用中式古典装修风格，配备客厅、餐厅、厨房等完整功能区，适合家庭度假或朋友聚会。</p>
+          </div>
+        </div>
+        
+        <div class="room-card">
+          <div class="room-image" style="background-image: url('https://picsum.photos/id/1060/600/400');"></div>
+          <div class="room-content">
+            <h3 class="room-title">湖景泳池别墅</h3>
+            <div class="room-info">
+              <span>面积: 180㎡</span>
+              <span class="room-price">¥5,888起/晚</span>
+            </div>
+            <p>庄园顶级房型，拥有私人露天泳池和一线湖景，室内装修奢华典雅，配备专业厨房、影音室、SPA 房，提供24小时私人管家服务，是高端度假的终极之选。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 餐饮体验页 -->
+    <div id="dining" class="page">
+      <div class="page-header" style="background-image: url('https://picsum.photos/id/1080/1200/800');">
+        <h1 class="page-title">餐饮体验</h1>
+        <p class="page-subtitle">舌尖上的江南风味</p>
+      </div>
+      <div class="page-content">
+        <h2 class="section-title">中餐厅 - 湘湖阁</h2>
+        <div class="restaurant-card">
+          <div class="restaurant-image" style="background-image: url('https://picsum.photos/id/1080/600/400');"></div>
+          <div class="restaurant-content">
+            <h3 class="restaurant-title">湘湖阁</h3>
+            <p class="restaurant-desc">主打正宗杭帮菜与江南特色美食，由名厨主理，选用本地新鲜食材，呈现“色、香、味、形”俱全的江南风味。餐厅环境古色古香，设有多个湖景包厢，是品尝地道杭帮菜的绝佳场所。</p>
+            <a href="#" class="btn">查看菜单</a>
+          </div>
+        </div>
+        
+        <h2 class="section-title">西餐厅 - 湖畔西餐厅</h2>
+        <div class="restaurant-card">
+          <div class="restaurant-image" style="background-image: url('https://picsum.photos/id/1082/600/400');"></div>
+          <div class="restaurant-content">
+            <h3 class="restaurant-title">湖畔西餐厅</h3>
+            <p class="restaurant-desc">提供国际风味美食，主打新鲜海鲜和顶级牛排，厨师团队擅长将西式烹饪技法与本地食材结合，创造独特的味觉体验。餐厅临湖而建，夜晚灯光璀璨，是浪漫晚餐的理想之选。</p>
+            <a href="#" class="btn">查看菜单</a>
+          </div>
+        </div>
+        
+        <h2 class="section-title">特色餐饮</h2>
+        <div class="section-content">
+          <div class="image-gallery">
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1081/600/400" alt="湖畔下午茶">
+            </div>
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1083/600/400" alt="庭院烧烤">
+            </div>
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1084/600/400" alt="茶道体验">
+            </div>
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1085/600/400" alt="红酒品鉴">
+            </div>
+          </div>
+          <p>庄园还提供湖畔下午茶、庭院烧烤、茶道体验、红酒品鉴等特色餐饮活动。在湘湖美景的映衬下，品尝精致美食，享受悠闲时光，是庄园不可错过的体验之一。</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 周边活动页 -->
+    <div id="activities" class="page">
+      <div class="page-header" style="background-image: url('https://picsum.photos/id/1036/1200/800');">
+        <h1 class="page-title">周边活动</h1>
+        <p class="page-subtitle">探索湘湖的无限魅力</p>
+      </div>
+      <div class="page-content">
+        <h2 class="section-title">湘湖景点</h2>
+        <div class="section-content">
+          <div class="image-gallery">
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1036/600/400" alt="湘湖风光">
+            </div>
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1037/600/400" alt="跨湖桥遗址">
+            </div>
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1038/600/400" alt="杭州极地海洋公园">
+            </div>
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1039/600/400" alt="湘湖游船">
+            </div>
+          </div>
+          <p>湘湖是浙江杭州的“母亲湖”，历史悠久，风景秀丽，有“杭州西湖的姊妹湖”之称。庄园周边拥有多个著名景点：</p>
+          <ul>
+            <li>• <strong>跨湖桥遗址</strong>：距今8000年的新石器时代遗址，出土了世界上最早的独木舟</li>
+            <li>• <strong>杭州极地海洋公园</strong>：集海洋动物展示、表演、科普于一体的大型海洋主题公园</li>
+            <li>• <strong>湘湖游船</strong>：乘坐游船欣赏湘湖美景，感受“船在湖中行，人在画中游”的意境</li>
+            <li>• <strong>湘湖金融小镇</strong>：兼具江南水乡特色和现代金融功能的特色小镇</li>
+          </ul>
+        </div>
+        
+        <h2 class="section-title">庄园活动</h2>
+        <div class="section-content">
+          <p>除了周边景点，庄园还为宾客提供丰富的内部活动：</p>
+          <ul>
+            <li>• <strong>晨练瑜伽</strong>：每天清晨在湖边草坪开展瑜伽课程，在自然中唤醒身体</li>
+            <li>• <strong>园艺体验</strong>：跟随园丁学习园艺知识，参与植物种植与养护</li>
+            <li>• <strong>手工制作</strong>：定期举办油纸伞绘制、丝绸扎染等传统手工艺体验活动</li>
+            <li>• <strong>亲子活动</strong>：儿童绘本阅读、趣味烘焙、户外探险等适合家庭参与的活动</li>
+            <li>• <strong>骑行探索</strong>：免费提供自行车，沿湘湖绿道骑行，探索周边美景</li>
+          </ul>
+        </div>
+        
+        <h2 class="section-title">交通指南</h2>
+        <div class="section-content">
+          <p><strong>地址：</strong>杭州市萧山区湘湖路1号</p>
+          <p><strong>交通方式：</strong></p>
+          <ul>
+            <li>• <strong>自驾</strong>：从杭州市中心出发，经中河高架→时代大道→湘湖路，约30分钟车程</li>
+            <li>• <strong>公共交通</strong>：地铁1号线到湘湖站，换乘公交706路至湘湖逍遥庄园站</li>
+            <li>• <strong>机场接送</strong>：提供杭州萧山国际机场接送服务（需提前预约）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 预订页面 -->
+    <div id="booking" class="page">
+      <div class="page-header" style="background-image: url('https://picsum.photos/id/1048/1200/800');">
+        <h1 class="page-title">立即预订</h1>
+        <p class="page-subtitle">开启您的逍遥之旅</p>
+      </div>
+      <div class="page-content">
+        <h2 class="section-title">预订方式</h2>
+        <div class="section-content">
+          <p>您可以通过以下方式预订杭州湘湖逍遥庄园酒店：</p>
+          <ul>
+            <li>• <strong>在线预订</strong>：通过酒店官方网站或合作旅行平台直接预订</li>
+            <li>• <strong>电话预订</strong>：拨打预订热线 <strong>0571-88887777</strong>，专业客服为您服务</li>
+            <li>• <strong>微信预订</strong>：关注酒店官方微信公众号，点击“在线预订”菜单</li>
+            <li>• <strong>邮件预订</strong>：发送预订需求至 <strong>reservation@xiaoyaomanor.com</strong></li>
+          </ul>
+        </div>
+        
+        <h2 class="section-title">预订优惠</h2>
+        <div class="section-content">
+          <div class="image-gallery">
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1081/600/400" alt="早鸟优惠">
+            </div>
+            <div class="gallery-item">
+              <img src="https://picsum.photos/id/1082/600/400" alt="套餐优惠">
+            </div>
+          </div>
+          <p>为回馈广大宾客，庄园推出多种预订优惠：</p>
+          <ul>
+            <li>• <strong>早鸟优惠</strong>：提前15天预订可享受房价8折优惠</li>
+            <li>• <strong>连住优惠</strong>：连住3晚及以上，赠送每日早餐和一次SPA体验</li>
+            <li>• <strong>套餐优惠</strong>：推出“湘湖度假套餐”“亲子欢乐套餐”等多种特色套餐</li>
+            <li>• <strong>会员优惠</strong>：加入酒店会员，享受积分兑换、生日礼遇等专属权益</li>
+          </ul>
+        </div>
+        
+        <h2 class="section-title">联系我们</h2>
+        <div class="section-content">
+          <p><strong>酒店地址：</strong>杭州市萧山区湘湖路1号</p>
+          <p><strong>预订电话：</strong>0571-88887777</p>
+          <p><strong>客服邮箱：</strong>service@xiaoyaomanor.com</p>
+          <p><strong>官方网站：</strong>www.xiaoyaomanor.com</p>
+          <p><strong>微信公众号：</strong>杭州湘湖逍遥庄园酒店</p>
+          <p><strong>营业时间：</strong>24小时全天候服务</p>
+        </div>
+        
+        <a href="#" class="btn" style="width: 100%; text-align: center;">立即在线预订</a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 底部导航栏 -->
+  <nav class="nav-bar">
+    <a href="#home" class="nav-item active" data-page="home">
+      <i class="fas fa-home"></i>
+      <span>首页</span>
+    </a>
+    <a href="#about" class="nav-item" data-page="about">
+      <i class="fas fa-info-circle"></i>
+      <span>酒店简介</span>
+    </a>
+    <a href="#facilities" class="nav-item" data-page="facilities">
+      <i class="fas fa-swimming-pool"></i>
+      <span>设施服务</span>
+    </a>
+    <a href="#rooms" class="nav-item" data-page="rooms">
+      <i class="fas fa-bed"></i>
+      <span>特色客房</span>
+    </a>
+    <a href="#dining" class="nav-item" data-page="dining">
+      <i class="fas fa-utensils"></i>
+      <span>餐饮体验</span>
+    </a>
+    <a href="#activities" class="nav-item" data-page="activities">
+      <i class="fas fa-hiking"></i>
+      <span>周边活动</span>
+    </a>
+    <a href="#booking" class="nav-item" data-page="booking">
+      <i class="fas fa-calendar-check"></i>
+      <span>立即预订</span>
+    </a>
+  </nav>
+
+  <script>
+    // 页面切换逻辑
+    document.addEventListener('DOMContentLoaded', function() {
+      const navItems = document.querySelectorAll('.nav-item');
+      const pages = document.querySelectorAll('.page');
+      const exploreMoreBtn = document.getElementById('explore-more');
+      
+      // 导航栏点击切换页面
+      navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          const pageId = this.getAttribute('data-page');
+          
+          // 移除所有页面的active类
+          pages.forEach(page => {
+            page.classList.remove('active');
+          });
+          
+          // 移除所有导航项的active类
+          navItems.forEach(navItem => {
+            navItem.classList.remove('active');
+          });
+          
+          // 添加active类到目标页面和导航项
+          document.getElementById(pageId).classList.add('active');
+          this.classList.add('active');
+        });
+      });
+      
+      // "探索更多"按钮点击事件
+      if (exploreMoreBtn) {
+        exploreMoreBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // 移除所有页面的active类
+          pages.forEach(page => {
+            page.classList.remove('active');
+          });
+          
+          // 移除所有导航项的active类
+          navItems.forEach(navItem => {
+            navItem.classList.remove('active');
+          });
+          
+          // 添加active类到"酒店简介"页面和对应的导航项
+          document.getElementById('about').classList.add('active');
+          navItems[1].classList.add('active');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>夏以昼</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            /* 将背景图片设置为覆盖整个页面，固定位置，不重复 */
+            background: url('IMG_6834.jpg') no-repeat center center fixed; 
+            background-size: cover;
+        }
+
+        #intro-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 30px;
+            font-size: 16px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #intro-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #intro-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            width: 80%;
+            text-align: center;
+        }
+
+        #close-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #ccc;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="intro-btn">点击查看介绍</button>
+    <div id="intro-modal">
+        <div id="intro-content">
+            <p>不需要我？好啊，那你需要什么？我都可以答应。你想要回临空，我们就回临空。你想回到从前，我们就把老宅翻修，一起住回去。一座房子不够，那就给你建一座迷宫。我会在里面给你准备最好的一切，把它建成世界上最漂亮的花园。有我陪着，以后，他们就再也找不到你了。</p>
+            <button id="close-btn">关闭</button>
+        </div>
+    </div>
+    <script>
+        const introBtn = document.getElementById('intro-btn');
+        const introModal = document.getElementById('intro-modal');
+        const closeBtn = document.getElementById('close-btn');
+
+        introBtn.addEventListener('click', function () {
+            introModal.style.display = 'flex';
+        });
+
+        closeBtn.addEventListener('click', function () {
+            introModal.style.display = 'none';
+        });
+    </script>
+</body>
+
+</html>
